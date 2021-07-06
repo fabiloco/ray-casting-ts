@@ -11,6 +11,9 @@ class Player {
     input: Input;
     level: Level;
     ray: Ray;
+    numRay: number;
+    rays: Ray[];
+    FOV: number;
 
     width: number;
     height: number;
@@ -40,7 +43,27 @@ class Player {
         this.color = '#0f0'
 
         // Ray
-        this.ray = new Ray(this.level, this.position.x, this.position.y, this.angel, this.speedRotate, 0);
+        this.numRay = this.level.canvas.width;
+        this.rays = [];
+
+        // Calculamos el angulo de cada rayo
+        this.FOV = 60;
+        const medioFOV = this.FOV/2;
+        let incrementAngel = this.convertInRand(this.FOV / this.numRay);
+        let initAngel = this.convertInRand(this.angel - medioFOV);
+
+        let rayAngel = initAngel;
+
+        // Creamos los rayos
+        for(let i = 0; i < this.numRay; i++) {
+            this.rays[i] = new Ray(this.level, this.position.x, this.position.y, this.angel, rayAngel, i);
+            rayAngel += incrementAngel;
+        };
+    };
+
+    private convertInRand(angel) {
+        angel = angel * (Math.PI / 180);
+        return angel;
     };
 
     private angleNormalization(angle: number) {
@@ -102,15 +125,20 @@ class Player {
         this.angel = this.angleNormalization(this.angel);
 
         // Actualizamos el angulo del rayo
-        this.ray.setAngulo(this.angel);
-        this.ray.position.x = this.position.x;
-        this.ray.position.y = this.position.y;
+
+        for(let i = 0; i < this.numRay; i++) {
+            this.rays[i].setAngulo(this.angel);
+            this.rays[i].position.x = this.position.x;
+            this.rays[i].position.y = this.position.y;
+        };
     };
 
     public draw(ctx: CanvasRenderingContext2D) {
 
         // Dibujamos el rayo
-        this.ray.draw(ctx);
+        for(let i = 0; i < this.numRay; i++) {
+            this.rays[i].draw(ctx);
+        }
 
         ctx.fillStyle = this.color;
         // Cuadrito
