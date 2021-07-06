@@ -1,5 +1,6 @@
 import Input from "./Input";
 import Level from "./Level";
+import Ray from "./Ray";
 
 interface Vector2d{
     x: number,
@@ -9,6 +10,7 @@ interface Vector2d{
 class Player {
     input: Input;
     level: Level;
+    ray: Ray;
 
     width: number;
     height: number;
@@ -36,6 +38,9 @@ class Player {
         this.height = 6;
 
         this.color = '#0f0'
+
+        // Ray
+        this.ray = new Ray(this.level, this.position.x, this.position.y, this.angel, this.speedRotate, 0);
     };
 
     private angleNormalization(angle: number) {
@@ -95,9 +100,18 @@ class Player {
         //Giramos
         this.angel += this.rotate * this.speedRotate;
         this.angel = this.angleNormalization(this.angel);
+
+        // Actualizamos el angulo del rayo
+        this.ray.setAngulo(this.angel);
+        this.ray.position.x = this.position.x;
+        this.ray.position.y = this.position.y;
     };
 
     public draw(ctx: CanvasRenderingContext2D) {
+
+        // Dibujamos el rayo
+        this.ray.draw(ctx);
+
         ctx.fillStyle = this.color;
         // Cuadrito
         ctx.fillRect(this.position.x - this.width/2, this.position.y - this.height/2, this.width, this.height);
@@ -113,7 +127,7 @@ class Player {
         ctx.strokeStyle = '#FFFFFF';
         ctx.stroke();
 
-        console.log(this.angel);
+        
     };
 };
 

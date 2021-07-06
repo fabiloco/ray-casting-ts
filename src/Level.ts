@@ -1,6 +1,6 @@
 class Level {
-    private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
+    public canvas: HTMLCanvasElement;
     public roomWidth: number;
     public roomHeight: number;
     public room: number[][]  = [
@@ -18,6 +18,8 @@ class Level {
     // Tiles dimensions
     public tileWidth: number;
     public tileHeight: number;
+    public tamTile: number = 50;
+
     public wallColor = '#000000';
     public floorColor = '#666666';
 
