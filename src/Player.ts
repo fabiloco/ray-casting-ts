@@ -38,6 +38,15 @@ class Player {
         this.color = '#0f0'
     };
 
+    private angleNormalization(angle: number) {
+        angle = angle % (2 * Math.PI);
+
+        if(angle < 0)
+            angle = angle + (2 * Math.PI);
+        
+        return angle;
+    };
+
     public collision(x: number, y: number) {
         let isColliding = false;
 
@@ -85,6 +94,7 @@ class Player {
 
         //Giramos
         this.angel += this.rotate * this.speedRotate;
+        this.angel = this.angleNormalization(this.angel);
     };
 
     public draw(ctx: CanvasRenderingContext2D) {
@@ -102,6 +112,8 @@ class Player {
         ctx.lineTo(destiny.x, destiny.y);
         ctx.strokeStyle = '#FFFFFF';
         ctx.stroke();
+
+        console.log(this.angel);
     };
 };
 
