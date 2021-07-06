@@ -56,7 +56,7 @@ class Player {
 
         // Creamos los rayos
         for(let i = 0; i < this.numRay; i++) {
-            this.rays[i] = new Ray(this.level, this.position.x, this.position.y, this.angel, rayAngel, i);
+            this.rays[i] = new Ray(this.level, this.position.x, this.position.y, this.angel, rayAngel, i, medioFOV);
             rayAngel += incrementAngel;
         };
     };
@@ -142,18 +142,18 @@ class Player {
 
         ctx.fillStyle = this.color;
         // Cuadrito
-        ctx.fillRect(this.position.x - this.width/2, this.position.y - this.height/2, this.width, this.height);
+        // ctx.fillRect(this.position.x - this.width/2, this.position.y - this.height/2, this.width, this.height);
 
-        // Linea de dirección
-        let destiny: Vector2d = {x:0, y:0};
-        destiny.x = this.position.x + Math.cos(this.angel) * 40;
-        destiny.y = this.position.y + Math.sin(this.angel) * 40;
+        // // Linea de dirección
+        // let destiny: Vector2d = {x:0, y:0};
+        // destiny.x = this.position.x + Math.cos(this.angel) * 40;
+        // destiny.y = this.position.y + Math.sin(this.angel) * 40;
 
-        ctx.beginPath();
-        ctx.moveTo(this.position.x, this.position.y);
-        ctx.lineTo(destiny.x, destiny.y);
-        ctx.strokeStyle = '#FFFFFF';
-        ctx.stroke();
+        // ctx.beginPath();
+        // ctx.moveTo(this.position.x, this.position.y);
+        // ctx.lineTo(destiny.x, destiny.y);
+        // ctx.strokeStyle = '#FFFFFF';
+        // ctx.stroke();
 
         
     };

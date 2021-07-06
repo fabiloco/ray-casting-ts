@@ -10,7 +10,9 @@ class Ray {
     position: coordinates;
     playerAngle: number;
     angleIncrement: number;
+
     column: number;
+    distance: number;
 
     wallHitx: number;
     wallHity: number;
@@ -21,12 +23,17 @@ class Ray {
     wallHitYVertical: number;
     wallHitXVertical: number;
 
-    constructor(level: Level, x: number, y: number, playerAngle: number, angleIncrement: number, column: number) {
+    medioFOV: number;
+
+    constructor(level: Level, x: number, y: number, playerAngle: number, angleIncrement: number, column: number, medioFOV: number) {
         this.position = {x: x, y: y}
         this.level = level;
         this.playerAngle = playerAngle;
         this.angleIncrement = angleIncrement;
+
+
         this.column = column;
+        this.distance = 0;
 
         this.wallHitx = 0;
         this.wallHity = 0;
@@ -36,6 +43,8 @@ class Ray {
 
         this.wallHitXVertical = 0;
         this.wallHitYVertical = 0;
+
+        this.medioFOV = medioFOV;
     };
 
     private angleNormalization(angle: number) {
@@ -190,9 +199,12 @@ class Ray {
         if(distanciaHorizontal < distanciaVertical) {
             this.wallHitx = this.wallHitXHorizontal;
             this.wallHity = this.wallHitYHorizontal;
+            this.distance = distanciaHorizontal;
+            
         } else {
             this.wallHitx = this.wallHitXVertical;
             this.wallHity = this.wallHitYVertical;
+            this.distance = distanciaVertical;
         };
 
         //-----------------------------------------
@@ -203,18 +215,39 @@ class Ray {
         // this.wallHity = this.wallHitYVertical;
     };
 
+    public renderWall(ctx: CanvasRenderingContext2D) {
+        
+        let altoTile = 500;
+        let distanciaPlanoProyeccion = (this.level.canvas. width / 2) / Math.tan(this.medioFOV);
+        let wallHeight = (altoTile / this.distance) * distanciaPlanoProyeccion;
+
+        // Calculamos donde empieza y acaba la línea
+        let y0 = Math.floor(this.level.canvas.height / 2) - Math.floor(wallHeight / 2);
+        let y1 = y0 + wallHeight;
+
+        let x = this.column;
+
+        // Dibujamos la columna (línea)
+        ctx.beginPath();
+        ctx.moveTo(x, y0);
+        ctx.lineTo(x, y1);
+        ctx.strokeStyle = '#666666'
+        ctx.stroke();
+    };
+
     public draw(ctx: CanvasRenderingContext2D) {
         this.cast();
+        this.renderWall(ctx);
 
         // Mostrar linea rayo
-        let xDestino = this.wallHitx;
-        let yDestino = this.wallHity;
+        // let xDestino = this.wallHitx;
+        // let yDestino = this.wallHity;
 
-        ctx.beginPath();
-        ctx.moveTo(this.position.x, this.position.y);
-        ctx.lineTo(xDestino, yDestino);
-        ctx.strokeStyle = 'red';
-        ctx.stroke();
+        // ctx.beginPath();
+        // ctx.moveTo(this.position.x, this.position.y);
+        // ctx.lineTo(xDestino, yDestino);
+        // ctx.strokeStyle = 'red';
+        // ctx.stroke();
     };
 };
 

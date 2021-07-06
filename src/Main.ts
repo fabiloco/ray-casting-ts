@@ -26,12 +26,18 @@ class Main {
         this.player = new Player(this.level, 100, 100);
     }
 
+    private clearCanvas() {
+        this.ctx.fillStyle = 'white';
+        this.ctx.fillRect(0,0, this.canvas.width, this.canvas.height);
+    };
+
     private update = () => {
         this.player.update();
     };
 
     private draw = () => {
-        this.level.draw(this.ctx);
+        this.clearCanvas();
+        // this.level.draw(this.ctx);
         this.player.draw(this.ctx);
     };
 
