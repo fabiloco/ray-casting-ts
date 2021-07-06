@@ -9,6 +9,7 @@ class Ray {
     level: Level;
     position: coordinates;
     playerAngle: number;
+    angel: number;
     angleIncrement: number;
 
     column: number;
@@ -28,8 +29,10 @@ class Ray {
     constructor(level: Level, x: number, y: number, playerAngle: number, angleIncrement: number, column: number, medioFOV: number) {
         this.position = {x: x, y: y}
         this.level = level;
-        this.playerAngle = playerAngle;
+
         this.angleIncrement = angleIncrement;
+        this.playerAngle = playerAngle;
+        this.angel = playerAngle + angleIncrement;
 
 
         this.column = column;
@@ -57,7 +60,8 @@ class Ray {
     };
 
     setAngulo(angulo: number) {
-        this.playerAngle = this.angleNormalization(angulo + this.angleIncrement);
+        this.playerAngle = angulo;
+        this.angel = this.angleNormalization(angulo + this.angleIncrement);
     };
 
     private distanceBetweenPoints(x1: number,y1: number, x2: number,y2: number): number {
@@ -75,9 +79,9 @@ class Ray {
         let down = false;
         let left = false;
 
-        if(this.playerAngle < Math.PI)
+        if(this.angel < Math.PI)
             down = true;
-        if(this.playerAngle > Math.PI / 2 && this.playerAngle < 3 * Math.PI / 2)
+        if(this.angel > Math.PI / 2 && this.angel < 3 * Math.PI / 2)
             left = true;
         
         //============================================================
@@ -91,12 +95,12 @@ class Ray {
         if(down)
             yIntercept += this.level.tamTile;
         
-        let adyacente = (yIntercept - this.position.y) / Math.tan(this.playerAngle);
+        let adyacente = (yIntercept - this.position.y) / Math.tan(this.angel);
         xIntercept = this.position.x + adyacente;
 
         // Calculamos la distancia de cada paso
         yStep = this.level.tamTile;
-        xStep = yStep / Math.tan(this.playerAngle);
+        xStep = yStep / Math.tan(this.angel);
 
         // Si vamos hacia arriba, invertimos el paso y
         if(!down)
@@ -146,7 +150,7 @@ class Ray {
             xIntercept += this.level.tamTile;
         
         // Se le suma el cateto opuesto
-        let opuesto = (xIntercept - this.position.x) * Math.tan(this.playerAngle);
+        let opuesto = (xIntercept - this.position.x) * Math.tan(this.angel);
         yIntercept = this.position.y + opuesto;
 
 
@@ -158,7 +162,7 @@ class Ray {
         if(left) 
             xStep = - xStep;
         
-        yStep = this.level.tamTile * Math.tan(this.playerAngle);
+        yStep = this.level.tamTile * Math.tan(this.angel);
 
         if((!down && yStep > 0) || (down && yStep < 0))
             yStep = -yStep;
@@ -207,12 +211,8 @@ class Ray {
             this.distance = distanciaVertical;
         };
 
-        //-----------------------------------------
-        // this.wallHitx = this.wallHitXHorizontal;
-        // this.wallHity = this.wallHitYHorizontal;
-
-        // this.wallHitx = this.wallHitXVertical;
-        // this.wallHity = this.wallHitYVertical;
+        // Correción ojo de pez
+        this.distance = this.distance * Math.cos(this.playerAngle - this.angel);
     };
 
     public renderWall(ctx: CanvasRenderingContext2D) {
