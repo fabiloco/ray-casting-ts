@@ -21,15 +21,23 @@ class Level {
     public wallColor = '#000000';
     public floorColor = '#666666';
 
-    constructor(canvas:HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
+    constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
         this.canvas = canvas;
         this.ctx = ctx;
         this.roomWidth = this.room.length;
         this.roomHeight = this.room[0].length;
 
-        this.tileWidth = this.canvas.width / this.roomWidth;
-        this.tileHeight = this.canvas.height / this.roomHeight;
+        this.tileWidth = Math.floor(this.canvas.width / this.roomWidth);
+        this.tileHeight = Math.floor(this.canvas.height / this.roomHeight);
     }
+
+    public collision(x: number, y: number) {
+        let isColliding = false;
+        if(this.room[y][x] !== 0) 
+            isColliding = true;
+        
+        return isColliding;
+    };
 
     public draw(ctx: CanvasRenderingContext2D){
         let color;

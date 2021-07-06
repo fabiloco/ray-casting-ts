@@ -13,6 +13,8 @@ class Main {
     private level: Level;
     private player: Player;
 
+    private lastTime: number = 0;
+
     constructor() {
         this.canvas = document.getElementsByTagName('canvas')[0];
         this.ctx = this.canvas.getContext("2d");
@@ -33,15 +35,19 @@ class Main {
         this.player.draw(this.ctx);
     };
 
-    public gameloop = () => {
-        setInterval(()=>{
-            this.update();
-            this.draw();
-        }, 1000/this.FPS);
+    public gameloop = (timeStamp) => {
+        let deltaTime = timeStamp - this.lastTime;
+        this.lastTime = timeStamp;
+
+        this.update();
+        this.draw();
+
+        requestAnimationFrame(this.gameloop);
     };
 };
 
 window.addEventListener('DOMContentLoaded', () => {
     const main: Main = new Main();  
-    main.gameloop();         
+    requestAnimationFrame(main.gameloop);
+    //main.gameloop();         
 });

@@ -38,6 +38,20 @@ class Player {
         this.color = '#0f0'
     };
 
+    public collision(x: number, y: number) {
+        let isColliding = false;
+
+        // Averiguamos en que tile esta el jugador
+        let tile: Vector2d = {x: 0, y: 0}
+        tile.x = Math.floor(x / this.level.tileWidth);
+        tile.y = Math.floor(y / this.level.tileHeight);
+
+        if(this.level.collision(tile.x, tile.y))
+            isColliding = true;
+        
+        return isColliding;
+    };
+
     public movement() {
         if(this.input.playerMovement.up) {
             this.move = 1;
@@ -64,17 +78,30 @@ class Player {
         newPos.x = this.position.x + (Math.cos(this.angel) * this.speedMove * this.move);
         newPos.y = this.position.y + (Math.sin(this.angel) * this.speedMove * this.move);
 
+        if(!this.collision(newPos.x, newPos.y)) {
+            this.position.x = newPos.x;
+            this.position.y = newPos.y;
+        }
 
         //Giramos
         this.angel += this.rotate * this.speedRotate;
-
-        this.position.x = newPos.x;
-        this.position.y = newPos.y;
     };
 
     public draw(ctx: CanvasRenderingContext2D) {
         ctx.fillStyle = this.color;
-        ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
+        // Cuadrito
+        ctx.fillRect(this.position.x - this.width/2, this.position.y - this.height/2, this.width, this.height);
+
+        // Linea de dirección
+        let destiny: Vector2d = {x:0, y:0};
+        destiny.x = this.position.x + Math.cos(this.angel) * 40;
+        destiny.y = this.position.y + Math.sin(this.angel) * 40;
+
+        ctx.beginPath();
+        ctx.moveTo(this.position.x, this.position.y);
+        ctx.lineTo(destiny.x, destiny.y);
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.stroke();
     };
 };
 
