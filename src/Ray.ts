@@ -1,4 +1,5 @@
 import Level from "./Level";
+import imgWall from './assets/walls.png';
 
 interface coordinates {
     x: number,
@@ -26,6 +27,10 @@ class Ray {
 
     medioFOV: number;
 
+    pixelTexture: number;
+    idTexture: number;
+    wallImg: HTMLImageElement;
+
     constructor(level: Level, x: number, y: number, playerAngle: number, angleIncrement: number, column: number, medioFOV: number) {
         this.position = {x: x, y: y}
         this.level = level;
@@ -34,6 +39,9 @@ class Ray {
         this.playerAngle = playerAngle;
         this.angel = playerAngle + angleIncrement;
 
+        this.wallImg = new Image();
+        this.wallImg.src = imgWall;
+        
 
         this.column = column;
         this.distance = 0;
@@ -48,6 +56,9 @@ class Ray {
         this.wallHitYVertical = 0;
 
         this.medioFOV = medioFOV;
+
+        this.pixelTexture = 0;
+        this.idTexture = 0;
     };
 
     private angleNormalization(angle: number) {
@@ -204,15 +215,22 @@ class Ray {
             this.wallHitx = this.wallHitXHorizontal;
             this.wallHity = this.wallHitYHorizontal;
             this.distance = distanciaHorizontal;
-            
+
+            let casilla = Math.floor(this.wallHitx / this.level.tamTile);
+            this.pixelTexture = this.wallHitx - (casilla * this.level.tamTile);
         } else {
             this.wallHitx = this.wallHitXVertical;
             this.wallHity = this.wallHitYVertical;
             this.distance = distanciaVertical;
+
+            let casilla = Math.floor(this.wallHity / this.level.tamTile);
+            this.pixelTexture = this.wallHity - (casilla * this.level.tamTile);
         };
 
+        this.idTexture = this.level.tile(this.wallHitx, this.wallHity);
+
         // Correción ojo de pez
-        this.distance = this.distance * Math.cos(this.playerAngle - this.angel);
+        this.distance = this.distance * Math.cos(this.playerAngle - this.angel); 
     };
 
     public renderWall(ctx: CanvasRenderingContext2D) {
@@ -227,12 +245,31 @@ class Ray {
 
         let x = this.column;
 
+        // Dibujamos con textura
+        let textureHeight = 64;
+        let heightImg = y0 - y1;
+
+        ctx.imageSmoothingEnabled = false;
+
+        ctx.drawImage(
+            this.wallImg,                           // wall img
+            this.pixelTexture,                      // x clippling
+            (this.idTexture -1) * textureHeight,    // y clipping
+            12,                                      // ancho clipping
+            64,                                     // alto clipping
+            this.column,                            // x donde empiza a dibujar
+            y1,                                     // y donde empieza a dibujar
+            1,                                      // anchura real
+            heightImg                               // altura real
+        );
+
+
         // Dibujamos la columna (línea)
-        ctx.beginPath();
-        ctx.moveTo(x, y0);
-        ctx.lineTo(x, y1);
-        ctx.strokeStyle = '#666666'
-        ctx.stroke();
+        // ctx.beginPath();
+        // ctx.moveTo(x, y0);
+        // ctx.lineTo(x, y1);
+        // ctx.strokeStyle = '#666666'
+        // ctx.stroke();
     };
 
     public draw(ctx: CanvasRenderingContext2D) {
