@@ -4,7 +4,7 @@ import Player from "./Player";
 class Main {
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
-    private FPS: number    = 50;
+    private FPS: number    = 60;
     
     // Canvas dimensions
     private WIDTH: number  = 500;
@@ -23,9 +23,12 @@ class Main {
         this.canvas.width = this.WIDTH;
         this.canvas.height = this.HEIGHT;
 
+        console.log(window.innerWidth);
         // reescalar canvas
-        this.canvas.style.width = '800px';
-        this.canvas.style.height = '800px';
+        // this.canvas.style.width = '800px';
+        // this.canvas.style.height = '800px';
+        // this.canvas.style.width = `${window.innerWidth}px`;
+        // this.canvas.style.height = `${window.innerHeight}px`;
 
         this.level = new Level(this.canvas, this.ctx);
         this.player = new Player(this.level, 100, 100);
