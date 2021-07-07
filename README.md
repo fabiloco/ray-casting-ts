@@ -1,1 +1,1 @@
-# Simple ray tracing in ts
+# Simple ray casting implementation in ts
